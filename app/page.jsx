@@ -4,6 +4,7 @@ import { RandomQuote } from 'components/random-quote';
 import { Markdown } from 'components/markdown';
 import { ContextAlert } from 'components/context-alert';
 import { getNetlifyContext } from 'utils';
+import { getArticles } from 'lib/api';
 
 const cards = [
     //{ text: 'Hello', linkText: 'someLink', href: '/' }
@@ -64,4 +65,30 @@ function RuntimeContextCard() {
     } else {
         return <Card title={title} text="This page was statically-generated at build time." />;
     }
+}
+import { getArticles } from '../lib/api';
+
+export default function Home({ articles }) {
+  return (
+    <div>
+      <h1>Articles</h1>
+      <ul>
+        {articles.map((article) => (
+          <li key={article.id}>
+            <h2>{article.attributes.title}</h2>
+            <div dangerouslySetInnerHTML={{ __html: article.attributes.body.value }} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export async function getStaticProps() {
+  const articles = await getArticles();
+  return {
+    props: {
+      articles,
+    },
+  };
 }
